@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mini games 100 robux của heafzedd</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&display=swap');
+        .font-pixel { font-family: 'Press+Start+2P', monospace; }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 py-4 px-6 shadow-lg">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <h1 class="text-xl sm:text-2xl font-bold font-pixel text-yellow-400 tracking-wider text-center sm:text-left drop-shadow-[0_2px_10px_rgba(234,179,8,0.3)]">
+                mini games 100 robux của heafzedd
+            </h1>
+            <div id="stats-bar" class="hidden flex items-center gap-6 bg-slate-950/80 px-4 py-2 rounded-xl border border-slate-800">
+                <div class="text-sm font-semibold text-slate-300">Màn: <span id="current-level" class="text-indigo-400 font-bold">1</span>/50</div>
+                <div class="text-sm font-semibold text-slate-300">Điểm: <span id="current-score" class="text-emerald-400 font-bold">0</span></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6">
+        <div class="w-full max-w-2xl mx-auto">
+
+            <!-- Start Screen -->
+            <div id="start-screen" class="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl text-center space-y-6">
+                <div class="inline-block p-4 bg-yellow-500/10 rounded-2xl border border-yellow-500/20 text-yellow-400 font-pixel text-sm">
+                    CHALLENGE 50 MÀN - NHẬN 100 ROBUX
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-white">Chinh Phục Tri Thức Cấp 12 & Đại Học</h2>
+                <p class="text-slate-400 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
+                    Chào mừng bạn đến với <span class="text-yellow-400 font-semibold">mini games 100 robux của heafzedd</span>! Trả lời lần lượt 50 câu hỏi (dù đúng hay sai bạn cũng sẽ được qua màn tiếp theo). Hoàn thành toàn bộ 50 câu để nhận ngay phần thưởng <span class="text-yellow-400 font-bold">100 Robux</span>!
+                </p>
+                <button onclick="startGame()" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 font-pixel text-xs tracking-wider">
+                    BẮT ĐẦU CHƠI NGAY
+                </button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quiz-screen" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Question Header -->
+                <div class="flex justify-between items-center text-xs sm:text-sm font-medium text-slate-400">
+                    <span id="question-category" class="px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-lg border border-indigo-500/20 font-semibold">Danh mục</span>
+                    <span>Câu hỏi số <span id="q-num">1</span> / 50</span>
+                </div>
+
+                <!-- Question Text -->
+                <div class="min-h-[90px] flex items-center">
+                    <h3 id="question-text" class="text-lg sm:text-xl font-semibold text-slate-100 leading-relaxed"></h3>
+                </div>
+
+                <!-- Input Form -->
+                <form id="answer-form" onsubmit="submitAnswer(event)" class="space-y-4">
+                    <div class="relative">
+                        <input type="text" id="user-answer" autocomplete="off" placeholder="Nhập đáp án của bạn..." 
+                            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition font-medium">
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button type="submit" class="flex-1 py-3.5 px-6 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition font-pixel text-xs tracking-wider">
+                            GỬI ĐÁP ÁN & QUA MÀN
+                        </button>
+                        <button type="button" onclick="toggleHint()" class="py-3.5 px-5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl transition text-sm">
+                            💡 Xem Gợi Ý
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Hint Box -->
+                <div id="hint-box" class="hidden p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-sm">
+                    <span class="font-bold">Gợi ý:</span> <span id="hint-text"></span>
+                </div>
+
+                <!-- Feedback Box -->
+                <div id="feedback-box" class="hidden p-4 rounded-xl text-sm font-medium"></div>
+            </div>
+
+            <!-- Victory / End Screen -->
+            <div id="end-screen" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl text-center space-y-6">
+                <div class="inline-block p-4 bg-yellow-500/10 rounded-2xl border border-yellow-500/20 text-yellow-400 font-pixel text-sm">
+                    🎉 NHẬN THƯỞNG 100 ROBUX 🎉
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-white">Hoàn Thành Thử Thách!</h2>
+                <p id="final-stats" class="text-slate-300 text-base leading-relaxed"></p>
+                <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 text-yellow-400 font-bold text-base shadow-inner">
+                    🎁 Chúc mừng bạn đã nhận được <span class="text-yellow-300 text-lg">100 ROBUX</span> từ hệ thống của heafzedd!
+                </div>
+                <button onclick="restartGame()" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition font-pixel text-xs tracking-wider">
+                    CHƠI LẠI TỪ ĐẦU
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-xs text-slate-500 border-t border-slate-900">
+        mini games 100 robux của heafzedd &copy; 2026. All rights reserved.
+    </footer>
+
+    <!-- Game Logic Script -->
+    <script>
+        const questions = [
+            { cat: "Toán học 12", q: "Đạo hàm của hàm số $y = e^{2x}$ là gì?", answers: ["2e^(2x)", "2*e^(2x)"], hint: "Sử dụng quy tắc đạo hàm hàm hợp cho hàm mũ cơ số e." },
+            { cat: "Vật lý 12", q: "Trong dao động điều hòa, độ lớn gia tốc đạt giá trị lớn nhất ở vị trí nào? (biên / cân bằng)", answers: ["biên"], hint: "Nơi vận tốc bằng không và lực kéo về đạt cực đại." },
+            { cat: "Hóa học 12", q: "Công thức hóa học của glucozơ là gì?", answers: ["C6H12O6"], hint: "Là monosaccharide quan trọng có 6 nguyên tử cacbon." },
+            { cat: "Đại học - Giải tích", q: "Giới hạn $\\lim_{x \\to 0} \\frac{\\sin x}{x}$ bằng bao nhiêu?", answers: ["1"], hint: "Đây là giới hạn lượng giác cơ bản." },
+            { cat: "Đại học - Đại số tuyến tính", q: "Định thức của ma trận đơn vị cấp 3 bằng bao nhiêu?", answers: ["1"], hint: "Ma trận đơn vị có các phần tử trên đường chéo chính bằng 1." },
+            { cat: "Toán học 12", q: "Tích phân từ 0 đến 1 của $2x$ dx bằng bao nhiêu?", answers: ["1"], hint: "Nguyên hàm của 2x là x bình phương." },
+            { cat: "Vật lý 12", q: "Hiện tượng quang điện xảy ra khi ánh sáng chiếu vào kim loại nếu bước sóng ánh sáng nhỏ hơn hoặc bằng gì?", answers: ["giới hạn quang điện"], hint: "Ký hiệu là lambda 0." },
+            { cat: "Hóa học 12", q: "Kim loại nào có độ dẫn điện lớn nhất trong tất cả các kim loại?", answers: ["bạc"], hint: "Ký hiệu hóa học là Ag." },
+            { cat: "Toán học 12", q: "Số phức $z = 3 + 4i$ có mô-đun bằng bao nhiêu?", answers: ["5"], hint: "Căn bậc hai của tổng bình phương phần thực và phần ảo." },
+            { cat: "Đại học - Xác suất thống kê", q: "Xác suất của một biến cố chắc chắn xảy ra bằng bao nhiêu?", answers: ["1"], hint: "Giá trị xác suất luôn nằm trong đoạn từ 0 đến 1." },
+            { cat: "Toán học 12", q: "Thể tích khối chóp có diện tích đáy $B$ và chiều cao $h$ có hệ số nhân $\\frac{1}{3}Bh$. Nhập hệ số: 1/3", answers: ["1/3"], hint: "Khối chóp luôn có hệ số 1/3." },
+            { cat: "Vật lý 12", q: "Đơn vị của cường độ dòng điện trong hệ SI là gì?", answers: ["ampere", "ampe"], hint: "Ký hiệu là chữ A." },
+            { cat: "Hóa học 12", q: "Chất nào làm quỳ tím hóa xanh: metylamin hay anilin?", answers: ["metylamin"], hint: "Amin mạch hở có tính bazơ mạnh." },
+            { cat: "Đại học - Giải tích", q: "Đạo hàm riêng theo biến x của $f(x,y) = x^2 y + y^3$ là gì?", answers: ["2xy"], hint: "Xem y như hằng số khi lấy đạo hàm theo x." },
+            { cat: "Toán học 12", q: "Tiệm cận ngang của đồ thị $y = \\frac{2x + 1}{x - 1}$ là đường thẳng $y$ bằng mấy?", answers: ["2"], hint: "Lấy hệ số của x ở tử chia mẫu." },
+            { cat: "Vật lý 12", q: "Sóng âm truyền được trong các môi trường nào: rắn, lỏng, khí?", answers: ["rắn, lỏng, khí"], hint: "Không truyền được trong chân không." },
+            { cat: "Hóa học 12", q: "Số liên kết peptit trong một tripeptit là bao nhiêu?", answers: ["2"], hint: "Tripeptit cấu tạo từ 3 amino acid." },
+            { cat: "Đại học - Toán rời rạc", q: "Đồ thị vô hướng 5 đỉnh, số cạnh tối đa của đồ thị đơn là bao nhiêu?", answers: ["10"], hint: "Công thức n(n-1)/2." },
+            { cat: "Toán học 12", q: "Mặt cầu $(x-1)^2 + (y+2)^2 + z^2 = 9$ có bán kính bằng bao nhiêu?", answers: ["3"], hint: "Căn bậc hai của vế phải." },
+            { cat: "Vật lý 12", q: "Chu kỳ dao động điều hòa của mạch LC được tính theo 2pi*căn(LC). Nhập: 2pi*can(LC)", answers: ["2pi*can(LC)", "2*pi*can(LC)"], hint: "Công thức T = 2pi * căn(LC)." },
+            { cat: "Hóa học 12", q: "Thủy phân hoàn toàn este trong môi trường kiềm thu được muối và gì?", answers: ["ancohol", "ancol", "alcohol", "rượu"], hint: "Hợp chất chứa nhóm -OH." },
+            { cat: "Đại học - Vật lý đại cương", q: "Định luật bảo toàn liên quan đến tính đồng nhất của thời gian là gì?", answers: ["bảo toàn năng lượng"], hint: "Năng lượng hệ cô lập theo thời gian." },
+            { cat: "Toán học 12", q: "Hàm số $y = x^3 - 3x$ đạt cực đại tại hoành độ bằng bao nhiêu?", answers: ["-1"], hint: "Giải phương trình đạo hàm bằng 0." },
+            { cat: "Vật lý 12", q: "Hiện tượng giao thoa ánh sáng chứng minh ánh sáng có tính chất gì?", answers: ["sóng"], hint: "Sóng ánh sáng." },
+            { cat: "Hóa học 12", q: "Kim loại kiềm thổ thuộc nhóm mấy trong bảng tuần hoàn? (Nhóm II)", answers: ["nhóm ii", "nhóm 2", "nhóm iia"], hint: "Nhóm đứng sau nhóm kim loại kiềm." },
+            { cat: "Đại học - Giải tích", q: "Tích phân suy rộng $\\int_1^{+\\infty} \\frac{1}{x^2} dx$ có giá trị bằng bao nhiêu?", answers: ["1"], hint: "Nguyên hàm của 1/x^2 là -1/x." },
+            { cat: "Toán học 12", q: "Véc-tơ pháp tuyến của mặt phẳng $2x - y + 3z - 5 = 0$ có hoành độ $A$ bằng mấy?", answers: ["2"], hint: "Hệ số của x." },
+            { cat: "Vật lý 12", q: "Suất điện động cảm ứng tỉ lệ thuận với tốc độ biến thiên của đại lượng nào?", answers: ["từ thông"], hint: "Ký hiệu phi." },
+            { cat: "Hóa học 12", q: "Polime dùng để làm tơ nilon-6,6 tổng hợp từ axit adipic và chất gì?", answers: ["hexametylenđiamin", "hexametylendiamin"], hint: "Điamin 6 carbon." },
+            { cat: "Đại học - Đại số tuyến tính", q: "Hạng của ma trận đơn vị cấp 4 bằng bao nhiêu?", answers: ["4"], hint: "Ma trận vuông cấp 4 khả nghịch." },
+            { cat: "Toán học 12", q: "Giá trị nhỏ nhất của hàm số $y = x^2 + 2x + 3$ trên R bằng bao nhiêu?", answers: ["2"], hint: "Đỉnh parabol." },
+            { cat: "Vật lý 12", q: "Quang phổ vạch phát xạ do chất nào ở trạng thái khí áp suất thấp phát ra?", answers: ["chất khí áp suất thấp", "khí áp suất thấp", "chất khí"], hint: "Nguyên tử trạng thái kích thích." },
+            { cat: "Hóa học 12", q: "Số nguyên tử hiđro trong một phân tử đường saccarozơ là bao nhiêu?", answers: ["22"], hint: "C12H22O11." },
+            { cat: "Đại học - Giải tích", q: "Nghiệm tổng quát của $y' + y = 0$ có hệ số mũ $k$ của e bằng mấy?", answers: ["-1"], hint: "Tích phân dy/y = -dx." },
+            { cat: "Toán học 12", q: "Họ nguyên hàm của hàm số $f(x) = \\cos x$ là gì?", answers: ["sin x", "sinx", "sin(x)"], hint: "Hàm sin." },
+            { cat: "Vật lý 12", q: "Trong mạch điện xoay chiều chỉ có tụ điện, dòng điện sớm pha hay trễ pha hơn điện áp?", answers: ["sớm pha"], hint: "Sớm pha góc pi/2." },
+            { cat: "Hóa học 12", q: "Kim loại điều chế bằng phương pháp thủy luyện: Na hay Cu?", answers: ["cu"], hint: "Đứng sau nhôm." },
+            { cat: "Đại học - Xác suất thống kê", q: "Kỳ vọng toán học $E(X)$ đại diện cho giá trị nào? (giá trị trung bình)", answers: ["giá trị trung bình", "trung bình"], hint: "Trung tâm phân phối." },
+            { cat: "Toán học 12", q: "Đồ thị hàm số $y = \\frac{x - 2}{x + 1}$ có tiệm cận đứng là $x$ bằng mấy?", answers: ["-1"], hint: "Cho mẫu bằng 0." },
+            { cat: "Vật lý 12", q: "Tia nào có bản chất là sóng điện từ: tia alpha, tia beta hay tia X?", answers: ["tia x"], hint: "Tia Rơn-ghen." },
+            { cat: "Hóa học 12", q: "Chất nào là chất điện li mạnh: axit axetic hay axit clohidric?", answers: ["axit clohidric", "hcl"], hint: "Axit vô cơ mạnh." },
+            { cat: "Đại học - Giải tích", q: "Điểm uốn của đồ thị $y = x^3$ nằm tại hoành độ $x$ bằng mấy?", answers: ["0"], hint: "Đạo hàm cấp hai bằng 0 tại gốc tọa độ." },
+            { cat: "Toán học 12", q: "Cấp số cộng có $u_1 = 2$, công sai $d = 3$. Số hạng $u_5$ bằng bao nhiêu?", answers: ["14"], hint: "u_5 = u_1 + 4d." },
+            { cat: "Vật lý 12", q: "Công thức tính khoảng vân $i$ trong thí nghiệm Y-âng là gì? (lambda*D/a)", answers: ["lambda*d/a", "lamda*d/a"], hint: "lambda nhân D chia a." },
+            { cat: "Hóa học 12", q: "Số nhóm cacboxyl trong một phân tử axit glutamic là bao nhiêu?", answers: ["2"], hint: "Có 2 nhóm -COOH." },
+            { cat: "Đại học - Đại số tuyến tính", q: "Phép nhân ma trận có tính chất giao hoán không? (có / không)", answers: ["không"], hint: "A*B khác B*A." },
+            { cat: "Toán học 12", q: "Thể tích khối cầu bán kính $R$ có hệ số phân số ở đầu $\\frac{4}{3}\\pi R^3$. Nhập: 4/3", answers: ["4/3"], hint: "4 phần 3." },
+            { cat: "Vật lý 12", q: "Phản ứng hạt nhân tỏa năng lượng khi tổng khối lượng trước phản ứng lớn hơn hay nhỏ hơn sau phản ứng?", answers: ["lớn hơn"], hint: "Hụt khối tạo năng lượng." },
+            { cat: "Hóa học 12", q: "Dung dịch iot làm hồ tinh bột chuyển sang màu gì?", answers: ["màu xanh tím", "xanh tím", "xanh"], hint: "Phản ứng đặc trưng với tinh bột." },
+            { cat: "Đại học - Giải tích", q: "Tích phân cơ bản $\\int e^x dx$ bằng gì ngoài C? (e^x)", answers: ["e^x"], hint: "Chính nó." }
+        ];
+
+        let currentLevel = 0;
+        let score = 0;
+        let currentQuestion = null;
+
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const endScreen = document.getElementById('end-screen');
+        const statsBar = document.getElementById('stats-bar');
+
+        const currentLevelSpan = document.getElementById('current-level');
+        const currentScoreSpan = document.getElementById('current-score');
+        const progressBar = document.getElementById('progress-bar');
+        const qNumSpan = document.getElementById('q-num');
+        const qCategorySpan = document.getElementById('question-category');
+        const qTextDiv = document.getElementById('question-text');
+        const userAnswerInput = document.getElementById('user-answer');
+        const hintBox = document.getElementById('hint-box');
+        const hintText = document.getElementById('hint-text');
+        const feedbackBox = document.getElementById('feedback-box');
+        const finalStats = document.getElementById('final-stats');
+
+        function startGame() {
+            currentLevel = 0;
+            score = 0;
+            startScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            statsBar.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentLevel >= questions.length) {
+                endGame();
+                return;
+            }
+
+            currentQuestion = questions[currentLevel];
+            currentLevelSpan.textContent = currentLevel + 1;
+            qNumSpan.textContent = currentLevel + 1;
+            currentScoreSpan.textContent = score;
+            qCategorySpan.textContent = currentQuestion.cat;
+            qTextDiv.textContent = currentQuestion.q;
+
+            const progress = ((currentLevel) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            userAnswerInput.value = '';
+            hintBox.classList.add('hidden');
+            hintText.textContent = currentQuestion.hint;
+            feedbackBox.classList.add('hidden');
+            userAnswerInput.focus();
+        }
+
+        function toggleHint() {
+            hintBox.classList.toggle('hidden');
+        }
+
+        function normalizeStr(str) {
+            return str.toLowerCase().trim().replace(/\s+/g, '');
+        }
+
+        function submitAnswer(e) {
+            e.preventDefault();
+            const userVal = userAnswerInput.value;
+            if (!userVal.trim()) return;
+
+            const normalizedUser = normalizeStr(userVal);
+            const isCorrect = currentQuestion.answers.some(ans => normalizeStr(ans) === normalizedUser);
+
+            feedbackBox.classList.remove('hidden');
+            if (isCorrect) {
+                score += 10;
+                currentScoreSpan.textContent = score;
+                feedbackBox.className = "p-4 rounded-xl text-sm font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
+                feedbackBox.textContent = "Chính xác! Đang chuyển sang màn tiếp theo...";
+            } else {
+                feedbackBox.className = "p-4 rounded-xl text-sm font-medium bg-rose-500/10 border border-rose-500/20 text-rose-400";
+                feedbackBox.textContent = `Chưa chính xác! (Đáp án đúng: "${currentQuestion.answers[0]}"). Đang tự động chuyển sang màn tiếp theo...`;
+            }
+
+            // Regardless of correct or incorrect, progress to the next level after a brief notification delay
+            setTimeout(() => {
+                currentLevel++;
+                loadQuestion();
+            }, 1500);
+        }
+
+        function endGame() {
+            quizScreen.classList.add('hidden');
+            statsBar.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+            finalStats.innerHTML = `Bạn đã hoàn thành đủ <span class="text-indigo-400 font-bold">50 câu hỏi</span> với tổng điểm đạt được là <span class="text-emerald-400 font-bold">${score}/500</span> điểm!`;
+        }
+
+        function restartGame() {
+            startGame();
+        }
+    </script>
+</body>
+</html>
+```eof
+
+### Tóm tắt cập nhật
+Tôi đã cập nhật lại luật chơi trong mã nguồn:
+1. **Qua màn tự động**: Dù người chơi trả lời **đúng hay sai**, trò chơi sẽ hiển thị thông báo ngắn gọn và tự động chuyển sang câu hỏi/màn chơi tiếp theo sau 1,5 giây.
+2. **Phần thưởng 100 Robux**: Khi hoàn thành cả 50 câu hỏi, màn hình kết thúc chiến thắng sẽ xuất hiện cùng hộp thông báo nhận ngay phần thưởng **100 Robux** từ "mini games 100 robux của heafzedd".
